@@ -134,36 +134,75 @@ git的优点：
 ----------
 
 ####远程仓库
-1、在本地也可以创建多个仓库（在不同目录下即可）
+**1、在本地也可以创建多个仓库（在不同目录下即可）**
 
-2、在GitHub上创建自己的仓库
+**2、在GitHub上创建自己的仓库**
 > 
 （1）创建自己的GitHub账号
 > 
 （2）创建SSH key 
     
-     在命令行下执行：
+
+
+>      在命令行下执行：
      ssh-keygen -t rsa -C "youremail@example.com"
      会产生“id_rsa（私钥）和id_rsa.pub（公钥）”两个文件密钥对。
+> 
 （3）登陆GitHub，打开“AccountSetting”->“Add SSH Key”
 
-    填写任意title，并在key文本框中粘贴id_rsa.pub文件的内容。
+>     填写任意title，并在key文本框中粘贴id_rsa.pub文件的内容。
+> 
 PS：GitHub中的仓库是public的，所以注意操作。
 
+**3、添加远程库**
 
+> （1）首先在GitHub上Create a new repo，如起名为learngit，完成这步则在GitHub上创建了一个名为learngit的空仓库。
+> 
+> （2）在本地仓库下运行命令：（关联远程库）
+> 
+>     git remote add origin git@github.com:***/learngit.git
+>     注：***为你GitHub的账户名。（远程库的名字为origin）
+> （3）将本地库内容推送（push）到远程库中
+> 
+>     git push -u origin master //第一次推送加上-u
+>     
+推送成功 ：
+         ![](https://i.imgur.com/IKIgy81.png)  
+（4）之后再提交只需
+> 
+      git push origin master//即可
+PS：
+> 
+   现在你已经拥有自己的分布式版本库。
+第一次和github进行ssh连接时会有一个warning，yes回车即可。
 
+4、克隆（clone）
 
+> （1）在GitHub上创建一个测试库，并获取地址（或者已经有了远程库地址），            
+>   如git@github.com:Abel-Maker/gitskills.git
+
+> （2）克隆：
+> 
+>      git clone git@github.com:Abel-Maker/gitskills.git 
+**success:**
+
+![](https://i.imgur.com/rDbg4Ti.png)
+>     
 ####分支管理
 **1、创建并合并分支**
 
 创建分支dev并切换到dev
-> git checkout -b dev
+> git branch dev //创建dev
+
+> git checkout dev//切换到dev
+> 
+> git checkout -b dev//二合一命令：创建并切换到分支dev
 
 查看当前所有分支，且当前分支前面会标一个*号
 > git branch 
 
 
-**在dev分支上修改master分支下的文件并add和commit（即在master分支下的文件基础上修改）**
+**在dev分支上修改master分支下的文件并<font color=#0000f>add和commit</font>（即在master分支下的文件基础上修改）**
 
 切换到master分支
 
@@ -171,7 +210,7 @@ PS：GitHub中的仓库是public的，所以注意操作。
 
 合并dev分支到master  即覆盖master分支上的文件。
 
-> git merge dev 
+> git merge dev //合并前请确认dev 是在**master的基础上**修改的
 
 删除分支dev：
 
@@ -180,7 +219,40 @@ PS：GitHub中的仓库是public的，所以注意操作。
 
 **2、解决冲突**
 
+
+分支dev与master分支上的同一文件，存在不同的修改，且都已经提交，故存在冲突。
+所以我们需要解决冲突。
+
+（1）找到冲突
+> git status
+> 
+![](https://i.imgur.com/7dxfGoB.png)
+>
+>发现test.php文件在两个分支中均存在修改。故进行第二步：
+
+（2）查看文件
+> cat test.php
+> 
+> ![](https://i.imgur.com/exlVJEw.png)
+> 
+Git用<<<<<<<，=======，>>>>>>>标记出不同分支的内容，我们修改后保存,并再次git add 和git commit
+
+（3）查看合并情况：
+> git log --graph //查看所有合并情况
+>![](https://i.imgur.com/oorHz75.png)
+> git log --graph --pretty=oneline --abbrev-commit//查看当前合并情况
+> ![](https://i.imgur.com/9xxb1p9.png)
+>
+<font color=#00fff size=5>All in ALL:</font><font size=3>当git无法自动合并时，就必须解决冲突，解决冲突就是手动编辑有冲突的文件，并再提交，则合并成功。</font>
+
 **3、分支管理策略**
+
+分支适合团队分工合作时进行使用，每个人都以master为基础如1.0,每次新的功能开发再进行迭代，进行分支合并，
+
+    PS：分支合并的基础是在master的基础（如文件的增加、文件内容的增加）之上合并，
+        只能是master没有的地方修改，否则存在冲突。故这里要求master的稳定性！否则将产生冲突。
+合并时不推荐采用fast forword，推荐如下：
+<font color=000ff >```git merge --no-ff -m <message description> <branch>```</font>
 
 **4、Bug分支**
 
