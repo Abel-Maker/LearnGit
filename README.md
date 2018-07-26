@@ -2,6 +2,17 @@
 
 #### 文档介绍
     git教程
+#### 基础概念
+> 
+**<font size=3>Remote</font>:**远程主仓库
+> 
+**<font size=3>Repository</font>:**本地仓库
+>
+**<font size=3>Index</font>:**Git追踪树，暂存区
+>
+**<font size=3>workspace</font>:**本地工作区（即你编辑器的代码）
+
+ ![](https://i.imgur.com/nVwJy5X.png)
 
 
 #### 安装教程
@@ -167,7 +178,8 @@ PS：GitHub中的仓库是public的，所以注意操作。
 >     git push -u origin master //第一次推送加上-u
 >     
 推送成功 ：
-         ![](https://i.imgur.com/IKIgy81.png)  
+> 
+   ![](https://i.imgur.com/IKIgy81.png)  
 （4）之后再提交只需
 > 
       git push origin master//即可
@@ -239,7 +251,9 @@ Git用<<<<<<<，=======，>>>>>>>标记出不同分支的内容，我们修改�
 
 （3）查看合并情况：
 > git log --graph //查看所有合并情况
+> 
 >![](https://i.imgur.com/oorHz75.png)
+>
 > git log --graph --pretty=oneline --abbrev-commit//查看当前合并情况
 > ![](https://i.imgur.com/9xxb1p9.png)
 >
@@ -256,13 +270,131 @@ Git用<<<<<<<，=======，>>>>>>>标记出不同分支的内容，我们修改�
 
 **4、Bug分支**
 
+在开发的过程中，经常会出现bug，故可以创建一个bug分支，进行修复bug，修复后可以合并分支，然后删除bug分支。
+
+(1)新建bug分支bug-101：
+> git checkout -b bug-101
+
+(2)修复bug后提交：
+> git add <filename>
+> 
+> git commit -m  "fix bug-101"
+
+(3)切换到master分支：
+> git checkout master
+
+(4)合并分支bug分支
+> git merge --no-ff -m "merge bug fix bug-101" bug-101
+ 
+(5)删除bug分支
+> git branch rm bug-101
+
+当项目还未完成时，需要修复当前bug，而且项目尚未提交（add）,则可以将工作现场**储藏**起来。
+> git stash
+
+查看工作现场：
+> git stash list
+
+恢复工作现场：
+> (1)git stash apply：
+
+     恢复后但stash的内容不删除，需要手动删除（git stash drop）
+
+> (2)git stash pop:
+
+    恢复工作区的同时删除stash内容
+PS：多次使用stash，恢复时先<font color=#000ff>```git stash list ```</font>,然后恢复指定的stash，使用<font color=#000ff>```git stash apply stash@{num}```</font>
+
 **5、Feature分支**
+
+开发新功能，则建立一个新的分支feature，但是由于需求变更，该功能不需要了，需要强制删除这个分支：
+> git branch -D feature//强制删除没用合并过的分支
 
 **6、多人协作**
 
+查看远程仓库：
+> git remote 
+
+查看详细信息
+> git remote -v
+
+推送分支：
+> git push origin master/<指定分支>
+
+哪些分支需要推送呢？
+
+> （1）<font color=red>`master`</font>分支是主分支，要与远程同步；
+> 
+> （2）<font color=red>`dev`</font>分支是开发分支，团队开发人员都在上面工作，所以需要远程同步
+> 
+> （3）bug分支只需要在本地修复即可
+> 
+> （4）feature分支是否推送到远程，取决于你是否和你的小伙伴合作在上面开发
+
+抓取分支：
+> 获取远程的dev分支：
+> git checkout -b dev origin/dev
+
+若远程端的分支与本地有冲突，则先pull下来，然后解决冲突：
+> git branch --set-upstream-to=origin/dev dev  //此处需要指定本地与远程分支的链接
+> git pull 
+#so#
+多人协作的工作模式通常是这样的：
+<pre>
+1、首先，可以试图用git push origin < branch-name>推送自己的修改；
+2、如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；
+3、如果合并有冲突，则解决冲突，并在本地提交；
+4、没有冲突或者解决掉冲突后，再用git push origin < branch-name>推送就能成功！
+5、如果git pull提示no tracking information，则说明本地分支和远程分支的链接关系没有创建，用命令git branch --set-upstream-to < branch-name> origin< branch-name>。
+</pre>
+这就是多人协作的工作模式，一旦熟悉了，就非常简单。
+
+
 **7、Rebase**
 
-####标签管理
-1、创建标签
+-rebase操作可以将本地未push的分叉提交历史整理成直线。
 
-2、操作标签
+-rebase的目的是使得我们在查看历史提交的变化时更容易，因为分叉的提交需要三方对比。
+
+####标签管理
+发布一个版本时先打一个标签<tag>，指向某个commit
+标签就是为了让开发者更好的记着commit的版本
+
+**1、创建标签**
+
+> git tag \<name> //默认标签是打在最新提交的commit上。
+
+查找历史版本：
+
+> git log --pretty=oneline --abbrev-commit
+
+对历史版本打标签
+> git tag \<name> \<对应commit的版本号前六位>
+
+查看所有标签
+> git tag //标签是按照字母顺序排序
+
+查看标签信息：
+> git show <tagname>
+
+创建带说明的标签：(-a(指定标签名) -m（指定说明文字）)
+> git tag -a v1.1 -m "REMARK" \<commit id>
+
+
+**2、操作标签**
+
+删除标签
+> git tag -d \<TagVersion>
+
+推送标签到remote
+> git push origin \<TagVersion>
+
+一次性推送所有标签
+> git push origin --tags
+
+远程删除标签
+> （1）从本地删除:git tag -d \<TagVersion>
+> （2）从远程删除：git push origin :refs/tags/\<TagVersion>
+
+####小结：
+> 看完教程，相信你已对git有了一定的认知，学习后，会使你工作效率大增，谢谢观看。
