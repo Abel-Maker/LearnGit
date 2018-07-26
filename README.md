@@ -1,4 +1,4 @@
-# LearnGit（上）
+# LearnGit
 
 #### 文档介绍
     git教程
