@@ -183,10 +183,26 @@ PS：GitHub中的仓库是public的，所以注意操作。
 （4）之后再提交只需
 > 
       git push origin master//即可
+
+
 PS：
 > 
    现在你已经拥有自己的分布式版本库。
 第一次和github进行ssh连接时会有一个warning，yes回车即可。
+
+PS:
+
+> 若出现refusing to merge unrelated histories
+> 
+Solve:
+`git pull --allow-unrelated-histories`
+
+PS:
+> 重命名远程仓库
+> `git remote rename pb paul //修改远程仓库pb 为paul`
+> 
+> 删除远程仓库
+> `git remote rm paul`
 
 4、克隆（clone）
 
